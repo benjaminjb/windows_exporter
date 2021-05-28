@@ -3772,6 +3772,7 @@ func (c *MSSQLCollector) collectSQLStats(ctx *ScrapeContext, ch chan<- prometheu
 // Win32_PerfRawData_MSSQLSERVER_SQLServerWaitStatistics docs:
 // - https://docs.microsoft.com/en-us/sql/relational-databases/performance-monitor/sql-server-wait-statistics-object
 type mssqlWaitStatistics struct {
+	Name                          string
 	AverageWaitsms                float64 `perflib:"Average Wait Time (ms)"`
 	CumulativeWaitTimemsPerSecond float64 `perflib:"Aggregated Wait Time (ms)"`
 	WaitsInProgress               float64 `perflib:"Waits in Progress"`
