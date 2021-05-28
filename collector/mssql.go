@@ -122,7 +122,6 @@ func mssqlGetPerfObjectName(sqlInstance string, collector string) string {
 		suffix = "SQL Statistics"
 	case "transactions":
 		suffix = "Transactions"
-	}
 	case "waitstats":
 		suffix = "Wait Statistics"
 	}
@@ -1806,21 +1805,21 @@ func NewMSSQLCollector() (Collector, error) {
 			[]string{"mssql_instance", "resource"},
 			nil,
 		),
-		
+
 		WaitStatsCumulativeWaitTimemsPerSecond: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, subsystem, "waitstats_wait_times_seconds_per_second"),
 			"(WaitStats.CumulativeWaitTimemsPerSecond Aggregated wait time per second, for the selected type of wait)",
 			[]string{"mssql_instance", "resource"},
 			nil,
 		),
-		
+
 		WaitStatsWaitsInProgress: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, subsystem, "waitstats_waits_in_progress"),
 			"(WaitStats.WaitsInProgress Number of processes currently waiting on the following type)",
 			[]string{"mssql_instance", "resource"},
 			nil,
 		),
-		
+
 		WaitStatsWaitsStartedPerSecond: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, subsystem, "waitstats_waits_started_per_second"),
 			"(WaitStats.WaitsStartedPerSecond Number of waits started per second of the selected type of wait)",
@@ -3777,8 +3776,8 @@ type mssqlWaitStatistics struct {
 	CumulativeWaitTimemsPerSecond float64 `perflib:"Aggregated Wait Time (ms)"`
 	WaitsInProgress               float64 `perflib:"Waits in Progress"`
 	WaitsStartedPerSecond         float64 `perflib:"Waits Started"`
-	
 }
+
 func (c *MSSQLCollector) collectWaitStats(ctx *ScrapeContext, ch chan<- prometheus.Metric, sqlInstance string) (*prometheus.Desc, error) {
 	var dst []mssqlWaitStatistics
 	log.Debugf("mssql_waitstats collector iterating sql instance %s.", sqlInstance)
@@ -3818,7 +3817,6 @@ func (c *MSSQLCollector) collectWaitStats(ctx *ScrapeContext, ch chan<- promethe
 			sqlInstance, resource,
 		)
 	}
-
 
 	return nil, nil
 }
