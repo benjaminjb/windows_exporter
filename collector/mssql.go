@@ -70,7 +70,7 @@ func getMSSQLInstances() mssqlInstancesType {
 type mssqlCollectorsMap map[string]mssqlCollectorFunc
 
 func mssqlAvailableClassCollectors() string {
-	return "accessmethods,availreplica,bufman,databases,dbreplica,genstats,locks,memmgr,sqlstats,sqlerrors,transactions"
+	return "accessmethods,availreplica,bufman,databases,dbreplica,genstats,locks,memmgr,sqlstats,sqlerrors,transactions,waitstats"
 }
 
 func (c *MSSQLCollector) getMSSQLCollectors() mssqlCollectorsMap {
@@ -86,6 +86,7 @@ func (c *MSSQLCollector) getMSSQLCollectors() mssqlCollectorsMap {
 	mssqlCollectors["sqlstats"] = c.collectSQLStats
 	mssqlCollectors["sqlerrors"] = c.collectSQLErrors
 	mssqlCollectors["transactions"] = c.collectTransactions
+	mssqlCollectors["waitstats"] = c.collectWaitStats
 
 	return mssqlCollectors
 }
@@ -121,6 +122,9 @@ func mssqlGetPerfObjectName(sqlInstance string, collector string) string {
 		suffix = "SQL Statistics"
 	case "transactions":
 		suffix = "Transactions"
+	}
+	case "waitstats":
+		suffix = "Wait Statistics"
 	}
 	return (prefix + suffix)
 }
@@ -381,6 +385,12 @@ type MSSQLCollector struct {
 	TransactionsVersionStoreUnits                *prometheus.Desc
 	TransactionsVersionStoreCreationUnits        *prometheus.Desc
 	TransactionsVersionStoreTruncationUnits      *prometheus.Desc
+
+	// Win32_PerfRawData_{instance}_SQLServerWaitStatistics
+	WaitStatsAverageWaitsms                *prometheus.Desc
+	WaitStatsCumulativeWaitTimemsPerSecond *prometheus.Desc
+	WaitStatsWaitsInProgress               *prometheus.Desc
+	WaitStatsWaitsStartedPerSecond         *prometheus.Desc
 
 	mssqlInstances             mssqlInstancesType
 	mssqlCollectors            mssqlCollectorsMap
@@ -1786,6 +1796,35 @@ func NewMSSQLCollector() (Collector, error) {
 			prometheus.BuildFQName(Namespace, subsystem, "transactions_version_store_truncation_units"),
 			"(Transactions.VersionStoreUnitTruncation)",
 			[]string{"mssql_instance"},
+			nil,
+		),
+
+		// Win32_PerfRawData_{instance}_SQLServerWaitStatistics
+		WaitStatsAverageWaitsms: prometheus.NewDesc(
+			prometheus.BuildFQName(Namespace, subsystem, "waitstats_average_waits_seconds"),
+			"(WaitStats.AverageWaitsms Average time for the selected type of wait)",
+			[]string{"mssql_instance", "resource"},
+			nil,
+		),
+		
+		WaitStatsCumulativeWaitTimemsPerSecond: prometheus.NewDesc(
+			prometheus.BuildFQName(Namespace, subsystem, "waitstats_wait_times_seconds_per_second"),
+			"(WaitStats.CumulativeWaitTimemsPerSecond Aggregated wait time per second, for the selected type of wait)",
+			[]string{"mssql_instance", "resource"},
+			nil,
+		),
+		
+		WaitStatsWaitsInProgress: prometheus.NewDesc(
+			prometheus.BuildFQName(Namespace, subsystem, "waitstats_waits_in_progress"),
+			"(WaitStats.WaitsInProgress Number of processes currently waiting on the following type)",
+			[]string{"mssql_instance", "resource"},
+			nil,
+		),
+		
+		WaitStatsWaitsStartedPerSecond: prometheus.NewDesc(
+			prometheus.BuildFQName(Namespace, subsystem, "waitstats_waits_started_per_second"),
+			"(WaitStats.WaitsStartedPerSecond Number of waits started per second of the selected type of wait)",
+			[]string{"mssql_instance", "resource"},
 			nil,
 		),
 
@@ -3727,6 +3766,59 @@ func (c *MSSQLCollector) collectSQLStats(ctx *ScrapeContext, ch chan<- prometheu
 			sqlInstance,
 		)
 	}
+
+	return nil, nil
+}
+
+// Win32_PerfRawData_MSSQLSERVER_SQLServerWaitStatistics docs:
+// - https://docs.microsoft.com/en-us/sql/relational-databases/performance-monitor/sql-server-wait-statistics-object
+type mssqlWaitStatistics struct {
+	AverageWaitsms                float64 `perflib:"Average Wait Time (ms)"`
+	CumulativeWaitTimemsPerSecond float64 `perflib:"Aggregated Wait Time (ms)"`
+	WaitsInProgress               float64 `perflib:"Waits in Progress"`
+	WaitsStartedPerSecond         float64 `perflib:"Waits Started"`
+	
+}
+func (c *MSSQLCollector) collectWaitStats(ctx *ScrapeContext, ch chan<- prometheus.Metric, sqlInstance string) (*prometheus.Desc, error) {
+	var dst []mssqlWaitStatistics
+	log.Debugf("mssql_waitstats collector iterating sql instance %s.", sqlInstance)
+
+	if err := unmarshalObject(ctx.perfObjects[mssqlGetPerfObjectName(sqlInstance, "waitstats")], &dst); err != nil {
+		return nil, err
+	}
+
+	for _, v := range dst {
+		resource := v.Name
+
+		ch <- prometheus.MustNewConstMetric(
+			c.WaitStatsAverageWaitsms,
+			prometheus.GaugeValue,
+			v.AverageWaitsms,
+			sqlInstance, resource,
+		)
+
+		ch <- prometheus.MustNewConstMetric(
+			c.WaitStatsCumulativeWaitTimemsPerSecond,
+			prometheus.GaugeValue,
+			v.CumulativeWaitTimemsPerSecond,
+			sqlInstance, resource,
+		)
+
+		ch <- prometheus.MustNewConstMetric(
+			c.WaitStatsWaitsInProgress,
+			prometheus.GaugeValue,
+			v.WaitsInProgress,
+			sqlInstance, resource,
+		)
+
+		ch <- prometheus.MustNewConstMetric(
+			c.WaitStatsWaitsStartedPerSecond,
+			prometheus.GaugeValue,
+			v.WaitsStartedPerSecond,
+			sqlInstance, resource,
+		)
+	}
+
 
 	return nil, nil
 }
