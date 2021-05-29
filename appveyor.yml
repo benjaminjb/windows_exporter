@@ -74,7 +74,7 @@ deploy:
     description: windows_exporter version $(appveyor_build_version)
     artifact: Artifacts
     auth_token:
-      secure: 'hFR7Ymxt/Rb25p4BweFvMNhX03lHD9kXJXrRlC/KbThazHuLD5NTx2ibMI6LYRsr'
+      secure: 'jy06a3eaGGlFUeMgMu4Aqz2d3W3ESdvChnUeMQZ116VmKsW/XyE0qpeskGBR2EE1'
     draft: false
     prerelease: false
     on:
