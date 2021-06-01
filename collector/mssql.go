@@ -1810,84 +1810,84 @@ func NewMSSQLCollector() (Collector, error) {
 		WaitStatsLockWaits: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, subsystem, "waitstats_lock_waits"),
 			"(WaitStats.LockWaits)",
-			[]string{"mssql_instance", "resource"},
+			[]string{"mssql_instance", "item"},
 			nil,
 		),
 
 		WaitStatsMemoryGrantQueueWaits: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, subsystem, "waitstats_memory_grant_queue_waits"),
 			"(WaitStats.MemoryGrantQueueWaits)",
-			[]string{"mssql_instance", "resource"},
+			[]string{"mssql_instance", "item"},
 			nil,
 		),
 
 		WaitStatsThreadSafeMemoryObjectsWaits: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, subsystem, "waitstats_thread_safe_memory_objects_waits"),
 			"(WaitStats.ThreadSafeMemoryObjectsWaits)",
-			[]string{"mssql_instance", "resource"},
+			[]string{"mssql_instance", "item"},
 			nil,
 		),
 
 		WaitStatsLogWriteWaits: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, subsystem, "waitstats_log_write_waits"),
 			"(WaitStats.LogWriteWaits)",
-			[]string{"mssql_instance", "resource"},
+			[]string{"mssql_instance", "item"},
 			nil,
 		),
 
 		WaitStatsLogBufferWaits: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, subsystem, "waitstats_log_buffer_waits"),
 			"(WaitStats.LogBufferWaits)",
-			[]string{"mssql_instance", "resource"},
+			[]string{"mssql_instance", "item"},
 			nil,
 		),
 
 		WaitStatsNetworkIOWaits: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, subsystem, "waitstats_network_io_waits"),
 			"(WaitStats.NetworkIOWaits)",
-			[]string{"mssql_instance", "resource"},
+			[]string{"mssql_instance", "item"},
 			nil,
 		),
 
 		WaitStatsPageIOLatchWaits: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, subsystem, "waitstats_page_io_latch_waits"),
 			"(WaitStats.PageIOLatchWaits)",
-			[]string{"mssql_instance", "resource"},
+			[]string{"mssql_instance", "item"},
 			nil,
 		),
 
 		WaitStatsPageLatchWaits: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, subsystem, "waitstats_page_latch_waits"),
 			"(WaitStats.PageLatchWaits)",
-			[]string{"mssql_instance", "resource"},
+			[]string{"mssql_instance", "item"},
 			nil,
 		),
 
 		WaitStatsNonpageLatchWaits: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, subsystem, "waitstats_nonpage_latch_waits"),
 			"(WaitStats.NonpageLatchWaits)",
-			[]string{"mssql_instance", "resource"},
+			[]string{"mssql_instance", "item"},
 			nil,
 		),
 
 		WaitStatsWaitForTheWorkerWaits: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, subsystem, "waitstats_wait_for_the_worker_waits"),
 			"(WaitStats.WaitForTheWorkerWaits)",
-			[]string{"mssql_instance", "resource"},
+			[]string{"mssql_instance", "item"},
 			nil,
 		),
 
 		WaitStatsWorkspaceSynchronizationWaits: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, subsystem, "waitstats_workspace_synchronization_waits"),
 			"(WaitStats.WorkspaceSynchronizationWaits)",
-			[]string{"mssql_instance", "resource"},
+			[]string{"mssql_instance", "item"},
 			nil,
 		),
 
 		WaitStatsTransactionOwnershipWaits: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, subsystem, "waitstats_transaction_ownership_waits"),
 			"(WaitStats.TransactionOwnershipWaits)",
-			[]string{"mssql_instance", "resource"},
+			[]string{"mssql_instance", "item"},
 			nil,
 		),
 
@@ -3860,90 +3860,90 @@ func (c *MSSQLCollector) collectWaitStats(ctx *ScrapeContext, ch chan<- promethe
 	}
 
 	for _, v := range dst {
-		resource := v.Name
+		item := v.Name
 
 		ch <- prometheus.MustNewConstMetric(
 			c.WaitStatsLockWaits,
 			prometheus.GaugeValue,
 			v.WaitStatsLockWaits,
-			sqlInstance, resource,
+			sqlInstance, item,
 		)
 
 		ch <- prometheus.MustNewConstMetric(
 			c.WaitStatsMemoryGrantQueueWaits,
 			prometheus.GaugeValue,
 			v.WaitStatsMemoryGrantQueueWaits,
-			sqlInstance, resource,
+			sqlInstance, item,
 		)
 
 		ch <- prometheus.MustNewConstMetric(
 			c.WaitStatsThreadSafeMemoryObjectsWaits,
 			prometheus.GaugeValue,
 			v.WaitStatsThreadSafeMemoryObjectsWaits,
-			sqlInstance, resource,
+			sqlInstance, item,
 		)
 
 		ch <- prometheus.MustNewConstMetric(
 			c.WaitStatsLogWriteWaits,
 			prometheus.GaugeValue,
 			v.WaitStatsLogWriteWaits,
-			sqlInstance, resource,
+			sqlInstance, item,
 		)
 
 		ch <- prometheus.MustNewConstMetric(
 			c.WaitStatsLogBufferWaits,
 			prometheus.GaugeValue,
 			v.WaitStatsLogBufferWaits,
-			sqlInstance, resource,
+			sqlInstance, item,
 		)
 
 		ch <- prometheus.MustNewConstMetric(
 			c.WaitStatsNetworkIOWaits,
 			prometheus.GaugeValue,
 			v.WaitStatsNetworkIOWaits,
-			sqlInstance, resource,
+			sqlInstance, item,
 		)
 
 		ch <- prometheus.MustNewConstMetric(
 			c.WaitStatsPageIOLatchWaits,
 			prometheus.GaugeValue,
 			v.WaitStatsPageIOLatchWaits,
-			sqlInstance, resource,
+			sqlInstance, item,
 		)
 
 		ch <- prometheus.MustNewConstMetric(
 			c.WaitStatsPageLatchWaits,
 			prometheus.GaugeValue,
 			v.WaitStatsPageLatchWaits,
-			sqlInstance, resource,
+			sqlInstance, item,
 		)
 
 		ch <- prometheus.MustNewConstMetric(
 			c.WaitStatsNonpageLatchWaits,
 			prometheus.GaugeValue,
 			v.WaitStatsNonpageLatchWaits,
-			sqlInstance, resource,
+			sqlInstance, item,
 		)
 
 		ch <- prometheus.MustNewConstMetric(
 			c.WaitStatsWaitForTheWorkerWaits,
 			prometheus.GaugeValue,
 			v.WaitStatsWaitForTheWorkerWaits,
-			sqlInstance, resource,
+			sqlInstance, item,
 		)
 
 		ch <- prometheus.MustNewConstMetric(
 			c.WaitStatsWorkspaceSynchronizationWaits,
 			prometheus.GaugeValue,
 			v.WaitStatsWorkspaceSynchronizationWaits,
-			sqlInstance, resource,
+			sqlInstance, item,
 		)
 
 		ch <- prometheus.MustNewConstMetric(
 			c.WaitStatsTransactionOwnershipWaits,
 			prometheus.GaugeValue,
 			v.WaitStatsTransactionOwnershipWaits,
-			sqlInstance, resource,
+			sqlInstance, item,
 		)
 	}
 
