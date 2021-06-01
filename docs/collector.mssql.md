@@ -244,10 +244,18 @@ Name | Description | Type | Labels
 `windows_mssql_transactions_version_store_units` | The number of active allocation units in the snapshot isolation version store in tempdb | counter | `mssql_instance`
 `windows_mssql_transactions_version_store_creation_units` | The number of allocation units that have been created in the snapshot isolation store since the instance of the Database Engine was started | counter | `mssql_instance`
 `windows_mssql_transactions_version_store_truncation_units` | The number of allocation units that have been removed from the snapshot isolation store since the instance of the Database Engine was started | counter | `mssql_instance`
-`windows_mssql_waitstats_average_waits_seconds` | Average time for the selected type of wait | gauge | `mssql_instance`, `resource`
-`windows_mssql_waitstats_wait_times_seconds_per_second` | Aggregated wait time per second, for the selected type of wait | gauge | `mssql_instance`, `resource`
-`windows_mssql_waitstats_waits_in_progress` | Number of processes currently waiting on the following type | gauge | `mssql_instance`, `resource`
-`windows_mssql_waitstats_waits_started_per_second` | Number of waits started per second of the selected type of wait | gauge | `mssql_instance`, `resource`
+`windows_mssql_waitstats_lock_waits` | Statistics for processes waiting on a lock... | counter | `mssql_instance`, `resource`
+`windows_mssql_waitstats_memory_grant_queue_waits` | Statistics for processes waiting on a lock... | counter | `mssql_instance`, `resource`
+`windows_mssql_waitstats_thread_safe_memory_objects_waits` | Statistics for processes waiting on a lock... | counter | `mssql_instance`, `resource`
+`windows_mssql_waitstats_log_write_waits` | Statistics for processes waiting on a lock... | counter | `mssql_instance`, `resource`
+`windows_mssql_waitstats_log_buffer_waits` | Statistics for processes waiting on a lock... | counter | `mssql_instance`, `resource`
+`windows_mssql_waitstats_network_io_waits` | Statistics for processes waiting on a lock... | counter | `mssql_instance`, `resource`
+`windows_mssql_waitstats_page_io_latch_waits` | Statistics for processes waiting on a lock... | counter | `mssql_instance`, `resource`
+`windows_mssql_waitstats_page_latch_waits` | Statistics for processes waiting on a lock... | counter | `mssql_instance`, `resource`
+`windows_mssql_waitstats_nonpage_latch_waits` | Statistics for processes waiting on a lock... | counter | `mssql_instance`, `resource`
+`windows_mssql_waitstats_wait_for_the_worker_waits` | Statistics for processes waiting on a lock... | counter | `mssql_instance`, `resource`
+`windows_mssql_waitstats_workspace_synchronization_waits` | Statistics for processes waiting on a lock... | counter | `mssql_instance`, `resource`
+`windows_mssql_waitstats_transaction_ownership_waits` | Statistics for processes waiting on a lock... | counter | `mssql_instance`, `resource`
 
 ### Example metric
 _This collector does not yet have explained examples, we would appreciate your help adding them!_
